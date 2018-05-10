@@ -20,7 +20,8 @@ import (
 )
 
 type Parser struct {
-	pi *[]*pair
+	pi     *[]*pair
+	format string
 }
 
 type pair struct {
@@ -47,6 +48,10 @@ func NewParser(rs ...rune) (*Parser, error) {
 		}
 	}
 	return &p, nil
+}
+
+func (p *Parser) SetFormat(format string) {
+	p.format = format
 }
 
 func (p *Parser) lin(r rune) (bool, *rune) {
