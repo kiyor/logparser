@@ -20,8 +20,7 @@ import (
 )
 
 type Parser struct {
-	pi     *[]*pair
-	format string
+	pi *[]*pair
 }
 
 type pair struct {
@@ -31,7 +30,7 @@ type pair struct {
 
 func NewParser(rs ...rune) (*Parser, error) {
 	if len(rs)%2 != 0 {
-		return nil, errors.New("input rune shoud be pair")
+		return nil, errors.New("input rune should be pair")
 	}
 	var p Parser
 	var pi []*pair
@@ -50,10 +49,7 @@ func NewParser(rs ...rune) (*Parser, error) {
 	return &p, nil
 }
 
-func (p *Parser) SetFormat(format string) {
-	p.format = format
-}
-
+// left in
 func (p *Parser) lin(r rune) (bool, *rune) {
 	for _, p := range *p.pi {
 		if r == p.L {
@@ -62,6 +58,8 @@ func (p *Parser) lin(r rune) (bool, *rune) {
 	}
 	return false, nil
 }
+
+// right in
 func (p *Parser) rin(r rune) bool {
 	for _, p := range *p.pi {
 		if r == p.R {
@@ -79,7 +77,7 @@ func (p *Parser) Split(line string) []string {
 	for _, c := range line {
 		// if right match
 		if pair == c {
-			out = aappend(out, word)
+			aappend(&out, word)
 			word = ""
 			pair = 0
 			if p.rin(c) && needRmatch {
@@ -94,10 +92,10 @@ func (p *Parser) Split(line string) []string {
 					word += string(c)
 					continue
 				}
-				out = aappend(out, word)
+				aappend(&out, word)
 				word = ""
 			} else if b, r := p.lin(c); b && !needRmatch { // if left match
-				out = aappend(out, word)
+				aappend(&out, word)
 				pair = *r
 				needRmatch = true
 			} else {
@@ -105,15 +103,14 @@ func (p *Parser) Split(line string) []string {
 			}
 		}
 	}
-	out = aappend(out, word)
+	aappend(&out, word)
 
 	return out
 }
 
-func aappend(ss []string, s string) []string {
+func aappend(ss *[]string, s string) {
 	s = strings.Trim(s, " ")
 	if len(s) > 0 {
-		ss = append(ss, s)
+		*ss = append(*ss, s)
 	}
-	return ss
 }
